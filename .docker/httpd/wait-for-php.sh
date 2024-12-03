@@ -6,7 +6,5 @@ until [ -d "/var/www/html/public/" ]; do
     echo "Le container PHP n'est pas encore prêt. Nouvelle tentative dans 5 secondes..."
     sleep 5
 done
-echo "Le container PHP est prêt !"
 
-# Démarrer Apache HTTPD
 exec httpd-foreground
