@@ -1,5 +1,9 @@
 # Environnement de développement Symfony 7
 
+## Quickly
+> git clone https://github.com/Cyrhades/symfony_dev_docker && cd symfony_dev_docker && make build-env
+
+
 ## Avec le Makefile
 > make build-env
 
