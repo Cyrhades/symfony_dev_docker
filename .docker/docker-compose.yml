@@ -1,0 +1,62 @@
+services:
+
+    db:
+        image: mysql:8.0.33
+        container_name: ho_mysql
+        platform: linux/x86_64
+        command: --default-authentication-plugin=mysql_native_password
+        volumes:
+            - "../project/db:/var/lib/mysql"
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin:latest
+        container_name: ho_phpmyadmin
+        depends_on:
+            - db
+        environment:
+            PMA_HOST: db
+            PMA_USER: ${MYSQL_USER}
+            PMA_PASSWORD: ${MYSQL_PASSWORD}
+            PMA_PORT: 3306
+        ports:
+            - 8080:80
+ 
+    apache:
+        container_name: ho_apache
+        build:
+            context: ./httpd
+            args:
+                TIMEZONE: ${TIMEZONE}
+        volumes:
+            - ../project/web:/var/www/html:cached
+        ports:
+            - 80:80
+        depends_on:
+            - php
+    php:
+        build:
+            context: ./php
+        container_name: ho_php
+        ports:
+            - "9000:9000" #fast-cgi
+        volumes:
+            - ../project/web:/var/www/html:cached
+        depends_on:
+            - mailhog
+
+    mailhog:
+        image: mailhog/mailhog
+        container_name: ho_mailhog
+        logging:
+            driver: 'none'
+        volumes:
+            - ../project/mail:/maildir:cached
+        ports:
+            - 1025:1025 # smtp server
+            - 8025:8025 # web ui
+    
