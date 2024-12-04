@@ -3,6 +3,7 @@ services:
     db:
         image: mysql:8.0.33
         container_name: ho_mysql
+        restart: always
         platform: linux/x86_64
         command: --default-authentication-plugin=mysql_native_password
         volumes:
@@ -16,6 +17,7 @@ services:
     phpmyadmin:
         image: phpmyadmin/phpmyadmin:latest
         container_name: ho_phpmyadmin
+        restart: always
         depends_on:
             - db
         environment:
@@ -27,11 +29,12 @@ services:
             - 8080:80
  
     apache:
-        container_name: ho_apache
         build:
             context: ./httpd
             args:
                 TIMEZONE: ${TIMEZONE}
+        container_name: ho_apache
+        restart: always
         volumes:
             - ../project/web:/var/www/html:cached
         ports:
@@ -42,6 +45,7 @@ services:
         build:
             context: ./php
         container_name: ho_php
+        restart: always
         volumes:
             - ../project/web:/var/www/html:cached
         depends_on:
@@ -50,6 +54,7 @@ services:
     mailhog:
         image: mailhog/mailhog
         container_name: ho_mailhog
+        restart: always
         logging:
             driver: 'none'
         volumes:
